@@ -15,8 +15,8 @@ div.dd.bb#rd {
         -列表-
         @click: handleClick(e)
     }
-    i
-    input.edit
+    i 
+    input.edit 
     ul.list {
       v-else
       li {
@@ -82,10 +82,40 @@ const paserTea = source => {
       source = "";
     }
   }
-  log(ast);
+  // log(ast);
   return ast;
 };
 
-paserTea(tea);
+const _ast = paserTea(tea);
 
-const AST2HTML = ast => {};
+const renderAttr = attr => {
+  if (!attr) {
+    return "";
+  }
+  const keys = Object.keys(attr);
+  const res = keys
+    .map(key => (attr[key] ? `${key}="${attr[key]}"` : `${key}`))
+    .join(" ");
+  return keys.length ? ` ${res}` : "";
+};
+
+const AST2HTML = ast => {
+  if (!ast || !ast.length) {
+    return "";
+  }
+  return ast
+    .map(ele => {
+      if (ele.type === 1) {
+        return ele.content;
+      }
+      if (ele.isSingle) {
+        return `<${ele.tagName}${renderAttr(ele.attr)} />`;
+      }
+      return `<${ele.tagName}${renderAttr(ele.attr)}>${AST2HTML(
+        ele.children
+      )}</${ele.tagName}>`;
+    })
+    .join("");
+};
+
+log(AST2HTML(_ast));
