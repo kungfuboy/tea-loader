@@ -1,0 +1,88 @@
+import { hasSymbol, isUnaryTag, isSVGTag, isHTMLTag } from "./utils/index.js";
+const tea = `
+div.dd.bb {
+    span {
+        class: test
+        -列表-
+        @click: handleClick
+    }
+    i
+    ul.list {
+        li {
+            v-for: items
+            -第{{ $_i }}个-
+        }
+    }
+}
+`;
+
+const RegHeader = /\S+\s{/;
+const RegOneLine = /.+[.\n\r]/;
+const paserTea = source => {
+  const ast = [];
+  let _step = 0, // 解析步骤，1: 解析完 header，2: 为解析完 { ，3: 解析完属性，0: 解析完 }
+    _source = "",
+    _header = "",
+    _cacheSource = "",
+    _index = 0,
+    _syIndex = 0,
+    _leftFCount = 0,
+    _RegRes = null;
+  while (source) {
+    if (!_step) {
+      // step 为 0
+      // 匹配整行 RegOneLine
+      _index = source.indexOf("{");
+      if (~_index) {
+        _header = source.slice(0, _index);
+        source = source.substring(_index);
+        _step = 1;
+        // console.log(source);
+        console.log("==1==");
+      }
+    }
+    if (_step === 1) {
+      source = source.substring(1);
+      _step = 2;
+      // console.log(source);
+      console.log("==2==");
+    }
+    if (_step === 2) {
+      // 核心
+      _RegRes = source.match(RegOneLine);
+      if (_RegRes) {
+        console.log("kkk", hasSymbol(_RegRes[0]));
+      }
+      console.log(_RegRes);
+      _index = source.indexOf("}");
+      source.slice(_syIndex, _index + 1);
+      if (~source.slice(0, _index).indexOf("{")) {
+        // 在这里进行层次递归，递归前要做非空判断
+        _syIndex = source.search(RegHeader);
+        console.log(
+          "==============\n",
+          source.slice(_syIndex, _index + 1),
+          "\n===end"
+        );
+        source = source.substring(_index);
+        _step = 3;
+      } else {
+        // 主要在这里处理属性[]
+        source = source.substring(_index);
+        _step = 3;
+      }
+      // console.log(source);
+      console.log("==3==");
+    }
+    if (_step === 3) {
+      source = source.substring(1);
+      _step = 0;
+      // console.log(source);
+      console.log("==0==");
+    }
+    source = source.substring(1);
+  }
+  return 1;
+};
+
+console.log(paserTea(tea));

@@ -1,0 +1,14 @@
+{
+  "name": "tea-loader",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "rollup src/index.js --file dist/index.js --format cjs -w",
+    "dev": "nodemon dist/index.js"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "nodemon": "^1.19.4",
+    "rollup": "^1.25.1"
+  }
+}
