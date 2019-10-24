@@ -104,7 +104,7 @@ export const whatType = string => {
 };
 
 export const hasSymbol = sign => {
-  if (~sign.search(/(?<=-).+(?=-)/)) {
+  if (~sign.search(/(?<=\s-).+(?=-\s)/)) {
     // 文本
     return 1;
   }
