@@ -3,7 +3,8 @@ import {
   parseHeader,
   parseAttr,
   parseContent,
-  whatType
+  whatType,
+  log
 } from "./utils/index.js";
 
 const tea = `
@@ -32,6 +33,8 @@ const paserTea = source => {
   const ast = [];
   let _cacheStack = [],
     _cacheEle = null,
+    ele = null,
+    len = 0,
     _status = 0,
     _RegRes = null;
   while (source) {
@@ -57,29 +60,32 @@ const paserTea = source => {
       }
       if (_status === 4) {
         // 解析出 tagName 和 静态属性
-        // 如果当前缓存对象没有children属性，则新建一个
-        if (!_cacheEle) {
-          _cacheEle = {};
-        } else {
-          _cacheStack.push(_cacheEle);
-        }
         _cacheEle = Object.assign({}, parseHeader(_RegRes[0]));
-        if (!~_RegRes[0].indexOf("{")) {
-          _cacheStack.pop();
-        }
+        _cacheStack.push(_cacheEle);
+        !~_RegRes[0].indexOf("{") && (_status = 5);
       }
       if (_status === 5) {
         // 处理 }
-        _cacheEle = _cacheStack.length ? _cacheStack.pop() : null;
+        ele = _cacheStack.pop();
+        len = _cacheStack.length;
+        if (len) {
+          !_cacheStack[len - 1].children &&
+            (_cacheStack[len - 1].children = []);
+          _cacheStack[len - 1].children.push(ele);
+        } else {
+          ast.push(ele);
+        }
+        _cacheEle = len ? _cacheStack[len - 1] : null;
       }
       source = source.substring(_RegRes[0].length);
     } else {
       source = "";
     }
   }
+  log(ast);
   return ast;
 };
 
-console.log(paserTea(tea));
+paserTea(tea);
 
 const AST2HTML = ast => {};

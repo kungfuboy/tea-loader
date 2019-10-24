@@ -122,3 +122,11 @@ export const hasSymbol = sign => {
   }
   return 0;
 };
+
+export const log = ctx => {
+  if (typeof ctx === "string") {
+    console.log(ctx);
+    return;
+  }
+  console.log(JSON.stringify(ctx, null, 2));
+};
