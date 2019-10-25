@@ -123,37 +123,9 @@ const hasSymbol = sign => {
   return 0;
 };
 
-const log = ctx => {
-  if (typeof ctx === "string") {
-    console.log(ctx);
-    return;
-  }
-  console.log(JSON.stringify(ctx, null, 2));
-};
-
-const tea = `
-div.dd.bb#rd {
-    span {
-        class: test
-        :tips: active ? '已选择' : '未选择'
-        -列表-
-        @click: handleClick(e)
-    }
-    i 
-    input.edit 
-    ul.list {
-      v-else
-      li {
-          v-for: items
-          -第{{ $_i }}个-
-      }
-    }
-    App
-}
-`;
-
 const RegOneLine = /.+[.\n\r]/;
-const paserTea = source => {
+
+const parseTea = source => {
   const ast = [];
   let _cacheStack = [],
     _cacheEle = null,
@@ -206,11 +178,8 @@ const paserTea = source => {
       source = "";
     }
   }
-  // log(ast);
   return ast;
 };
-
-const _ast = paserTea(tea);
 
 const renderAttr = attr => {
   if (!attr) {
@@ -242,4 +211,7 @@ const AST2HTML = ast => {
     .join("");
 };
 
-log(AST2HTML(_ast));
+module.exports = function(source) {
+  const res = parseTea(source);
+  return AST2HTML(res);
+};
