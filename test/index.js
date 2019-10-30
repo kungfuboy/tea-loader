@@ -10,6 +10,7 @@ const tea = `
       }
       i {
         ~2019-10-25~
+        slot
       }
       input.edit 
       ul.list {
