@@ -5,7 +5,7 @@
   "scripts": {
     "build": "rollup src/index.js --file dist/index.js --format cjs -w",
     "dev": "nodemon dist/index.js",
-    "test": "nodemon test/index.js"
+    "test": "rollup src/index.js --file dist/index.js --format cjs && nodemon test/index.js"
   },
   "license": "MIT",
   "devDependencies": {

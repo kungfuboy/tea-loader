@@ -138,6 +138,11 @@ const parseTea = source => {
   while (source) {
     _RegRes = source.match(RegOneLine);
     if (_RegRes) {
+      if (!_RegRes[0].trim() || !_RegRes[0].trim().indexOf("//")) {
+        // 处理空行 和 注释行
+        source = source.substring(_RegRes[0].length);
+        continue;
+      }
       _status = hasSymbol(_RegRes[0]);
       if (!_status) {
         // 这里不做处理，仅改变 status 的状态

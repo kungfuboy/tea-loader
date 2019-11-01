@@ -12,6 +12,7 @@ const tea = `
         ~2019-10-25~
         slot
       }
+      // 注释
       input.edit 
       ul.list {
         v-else
@@ -20,6 +21,7 @@ const tea = `
             ~第{{ $_i }}个~
         }
       }
+
       App
   }
   `;
