@@ -24,6 +24,10 @@ const tea = `
 
       App
   }
+  Main
+  section {
+    slot
+  }
   `;
 
 console.log(teaLoader(tea));
