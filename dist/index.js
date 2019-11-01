@@ -86,7 +86,8 @@ const parseContent = string => {
   return res[0];
 };
 
-const parseAttr = string => {
+const parseAttr = (string, attr) => {
+  // attr 用于查看已有的属性
   string = string.trim();
   let _index = string.indexOf(":"),
     left,
@@ -100,9 +101,13 @@ const parseAttr = string => {
   }
   left = ~_index ? string.slice(0, _index) : string;
   right = ~_index ? `${string.slice(_index + 1).trim()}` : null;
-  return {
-    [isStatic ? left : `:${left}`]: right
-  };
+  const obj = {};
+  if (left === "v-for" && !right.match(/\sin\s/)) {
+    right = `($it, $_i) in ${right}`;
+    obj[":key"] = "$_i";
+  }
+  obj[isStatic ? left : `:${left}`] = right;
+  return obj;
 };
 
 const hasSymbol = sign => {
@@ -158,7 +163,7 @@ const parseTea = source => {
         _cacheEle.attr = Object.assign(
           {},
           _cacheEle.attr,
-          parseAttr(_RegRes[0])
+          parseAttr(_RegRes[0], _cacheEle.attr)
         );
       }
       if (_status === 4) {

@@ -86,7 +86,8 @@ export const parseContent = string => {
   return res[0];
 };
 
-export const parseAttr = string => {
+export const parseAttr = (string, attr) => {
+  // attr 用于查看已有的属性
   string = string.trim();
   let _index = string.indexOf(":"),
     left,
@@ -100,9 +101,13 @@ export const parseAttr = string => {
   }
   left = ~_index ? string.slice(0, _index) : string;
   right = ~_index ? `${string.slice(_index + 1).trim()}` : null;
-  return {
-    [isStatic ? left : `:${left}`]: right
-  };
+  const obj = {};
+  if (left === "v-for" && !right.match(/\sin\s/)) {
+    right = `($it, $_i) in ${right}`;
+    obj[":key"] = "$_i";
+  }
+  obj[isStatic ? left : `:${left}`] = right;
+  return obj;
 };
 
 export const hasSymbol = sign => {

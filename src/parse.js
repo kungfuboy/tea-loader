@@ -39,7 +39,7 @@ export const parseTea = source => {
         _cacheEle.attr = Object.assign(
           {},
           _cacheEle.attr,
-          parseAttr(_RegRes[0])
+          parseAttr(_RegRes[0], _cacheEle.attr)
         );
       }
       if (_status === 4) {
