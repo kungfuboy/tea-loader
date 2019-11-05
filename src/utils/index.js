@@ -103,6 +103,7 @@ export const parseAttr = (string, attr) => {
   right = ~_index ? `${string.slice(_index + 1).trim()}` : null;
   const obj = {};
   if (left === "v-for" && !right.match(/\sin\s/)) {
+    // 优化 v-for 指令
     right = `($it, $_i) in ${right}`;
     obj[":key"] = "$_i";
   }
