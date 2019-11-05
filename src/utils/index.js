@@ -131,6 +131,54 @@ export const hasSymbol = sign => {
   return 0;
 };
 
+export const clearComment = string => {
+  // 清除所有的注释
+  // 需要处理以下几种情况
+  // 1. <!-- xxx -->
+  // 2. /* xxx */
+  // 3. // xxx
+  let index,
+    res = "";
+  while (string) {
+    index = string.indexOf("<!--");
+    if (~index) {
+      res += string.slice(0, index);
+      index = string.indexOf("-->");
+      if (~index) {
+        string = string.substring(index + 3);
+        continue;
+      }
+      string = "";
+      continue;
+    }
+    index = string.indexOf("/*");
+    if (~index) {
+      res += string.slice(0, index);
+      index = string.indexOf("*/");
+      if (~index) {
+        string = string.substring(index + 2);
+        continue;
+      }
+      string = "";
+      continue;
+    }
+    index = string.indexOf("//");
+    if (~index) {
+      res += string.slice(0, index);
+      index = string.search(/\n/);
+      if (~index) {
+        string = string.substring(index + 2);
+        continue;
+      }
+      string = "";
+      continue;
+    }
+    res += string;
+    string = "";
+  }
+  return res;
+};
+
 export const log = ctx => {
   if (typeof ctx === "string") {
     console.log(ctx);

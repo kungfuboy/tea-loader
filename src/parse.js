@@ -3,12 +3,14 @@ import {
   parseHeader,
   parseAttr,
   parseContent,
-  whatType
+  whatType,
+  clearComment
 } from "./utils/index.js";
 
 const RegOneLine = /.+[.\n\r]/;
 
 export const parseTea = source => {
+  source = clearComment(source);
   const ast = [];
   let _cacheStack = [],
     _cacheEle = null,
@@ -19,8 +21,8 @@ export const parseTea = source => {
   while (source) {
     _RegRes = source.match(RegOneLine);
     if (_RegRes) {
-      if (!_RegRes[0].trim() || !_RegRes[0].trim().indexOf("//")) {
-        // 处理空行 和 注释行
+      if (!_RegRes[0].trim()) {
+        // 处理空行
         source = source.substring(_RegRes[0].length);
         continue;
       }

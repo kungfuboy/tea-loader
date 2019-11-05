@@ -103,6 +103,7 @@ const parseAttr = (string, attr) => {
   right = ~_index ? `${string.slice(_index + 1).trim()}` : null;
   const obj = {};
   if (left === "v-for" && !right.match(/\sin\s/)) {
+    // 优化 v-for 指令
     right = `($it, $_i) in ${right}`;
     obj[":key"] = "$_i";
   }
@@ -130,9 +131,58 @@ const hasSymbol = sign => {
   return 0;
 };
 
+const clearComment = string => {
+  // 清除所有的注释
+  // 需要处理以下几种情况
+  // 1. <!-- xxx -->
+  // 2. /* xxx */
+  // 3. // xxx
+  let index,
+    res = "";
+  while (string) {
+    index = string.indexOf("<!--");
+    if (~index) {
+      res += string.slice(0, index);
+      index = string.indexOf("-->");
+      if (~index) {
+        string = string.substring(index + 3);
+        continue;
+      }
+      string = "";
+      continue;
+    }
+    index = string.indexOf("/*");
+    if (~index) {
+      res += string.slice(0, index);
+      index = string.indexOf("*/");
+      if (~index) {
+        string = string.substring(index + 2);
+        continue;
+      }
+      string = "";
+      continue;
+    }
+    index = string.indexOf("//");
+    if (~index) {
+      res += string.slice(0, index);
+      index = string.search(/\n/);
+      if (~index) {
+        string = string.substring(index + 2);
+        continue;
+      }
+      string = "";
+      continue;
+    }
+    res += string;
+    string = "";
+  }
+  return res;
+};
+
 const RegOneLine = /.+[.\n\r]/;
 
 const parseTea = source => {
+  source = clearComment(source);
   const ast = [];
   let _cacheStack = [],
     _cacheEle = null,
@@ -143,8 +193,8 @@ const parseTea = source => {
   while (source) {
     _RegRes = source.match(RegOneLine);
     if (_RegRes) {
-      if (!_RegRes[0].trim() || !_RegRes[0].trim().indexOf("//")) {
-        // 处理空行 和 注释行
+      if (!_RegRes[0].trim()) {
+        // 处理空行
         source = source.substring(_RegRes[0].length);
         continue;
       }

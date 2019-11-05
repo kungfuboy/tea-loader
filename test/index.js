@@ -15,7 +15,10 @@ const tea = `
       // 注释
       input.edit 
       ul.list {
-        v-else
+        <!-- v-else -->
+        /* i.love {
+            v-if: love
+        }*/
         li {
             v-for: items
             ~第{{ $_i }}个~
