@@ -24,6 +24,10 @@ const tea = `
             ~第{{ $_i }}个~
         }
       }
+      a.dir {
+        v-bind:href: url
+        v-on:click: hanleClick
+      }
 
       App
   }

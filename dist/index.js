@@ -89,6 +89,8 @@ const parseContent = string => {
 const parseAttr = (string, attr) => {
   // attr 用于查看已有的属性
   string = string.trim();
+  !string.indexOf("v-bind") && (string = string.substring(6));
+  !string.indexOf("v-on") && (string = `@${string.substring(5)}`);
   let _index = string.indexOf(":"),
     left,
     right,

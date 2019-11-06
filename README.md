@@ -108,6 +108,36 @@ span {
 <span>Click<i></i><span>
 ```
 
+### 针对Vue优化
+
+#### v-for
+
+```
+// vue html
+<ul>
+	<li v-for="(item, index) in items" :key="index">{{ item }} {{ index }}</li>
+</ul>
+
+// vue tea
+ul {
+	li {
+		v-for: items
+		~{{ $it }} {{ $_i }}~
+	}
+}
+
+// vue tea
+ul {
+	li {
+		v-for: (item, i) in items
+		:key: i
+		~{{ item }} {{ i }}~
+	}
+}
+```
+
+以上三者效果是一样的。
+
 > 请注意，目前~ ~内不支持多行文本，会尽快支持。
 
 更多简洁高效的功能正在开发中……
