@@ -15,7 +15,12 @@ const isHTMLTag = makeMap(
   `html,body,base,head,link,meta,style,title,address,article,aside,footer,header,h1,h2,h3,h4,h5,h6,hgroup,nav,section,div,dd,dl,dt,figcaption,figure,picture,hr,img,li,main,ol,p,pre,ul,a,b,abbr,bdi,bdo,br,cite,code,data,dfn,em,i,kbd,mark,q,rp,rt,rtc,ruby,s,samp,small,span,strong,sub,sup,time,u,var,wbr,area,audio,map,track,video,embed,object,param,source,canvas,script,noscript,del,ins,caption,col,colgroup,table,thead,tbody,td,th,tr,button,datalist,fieldset,form,input,label,legend,meter,optgroup,option,output,progress,select,textarea,details,dialog,menu,menuitem,summary,content,element,shadow,template,blockquote,iframe,tfoot`
 );
 
-const isVueTag = makeMap(`slot`);
+const isVueTag = makeMap(`slot,template`);
+
+const isTag = _string => {
+  const string = _string.trim();
+  return isSVGTag(string) || isHTMLTag(string) || isVueTag(string);
+};
 
 const parseHeader = string => {
   const _index = string.indexOf("{"),
@@ -56,188 +61,145 @@ const parseHeader = string => {
     tagName,
     isSingle: isUnaryTag(tagName),
     type: 2,
+    children: [],
     attr: {
       ...obj
     }
   };
 };
 
-const whatType = string => {
-  // 传入的字符串没有明显的标识，有以下几种情况
-  // 1. 原生标签
-  // 2. 属性
-  // 3. 组件
-  const res = string.match(/(\S+?)(?=[\.#&\s])/);
-  if (isHTMLTag(res[0]) || isSVGTag(res[0]) || isVueTag(res[0])) {
-    //   原生标签
-    return 4;
+const vueBetter = attr => {
+  const [left] = Object.keys(attr);
+  const right = attr[left];
+  switch (left) {
+    case "v-for":
+      if (!right.match(/\sin\s/)) {
+        attr[left] = `($it, $_i) in ${right}`;
+        attr[":key"] = "$_i";
+      }
+      break;
   }
-  if (~string.search(/(?<=[A-Z]).+/)) {
-    //   组件
-    return 4;
-  }
-  //   属性
-  return 2;
+  return attr;
 };
 
-const parseContent = string => {
-  // 匹配 -content-
-  const res = string.match(/(?<=~).+(?=~)/);
-  return res[0];
-};
-
-const parseAttr = (string, attr) => {
-  // attr 用于查看已有的属性
-  string = string.trim();
-  !string.indexOf("v-bind") && (string = string.substring(6));
-  !string.indexOf("v-on") && (string = `@${string.substring(5)}`);
-  let _index = string.indexOf(":"),
-    left,
-    right,
-    isStatic = true;
-  if (_index === 0) {
-    // 说明是动态属性，先切除
-    string = string.substring(1);
-    isStatic = false;
-    _index = string.indexOf(":");
+const hasSymbol = source => {
+  if (source.match(/((~{1,2}).+)/)) {
+    // 1. 匹配文本
+    const _content =
+      source.match(/(?<=~~).+(?=\n)/) || source.match(/(?<=~).+(?=~\n)/);
+    if (!_content) {
+      throw Error(`You miss '~' at begin or end of the line.`);
+    }
+    return [1, _content[0]];
   }
-  left = ~_index ? string.slice(0, _index) : string;
-  right = ~_index ? `${string.slice(_index + 1).trim()}` : null;
-  const obj = {};
-  if (left === "v-for" && !right.match(/\sin\s/)) {
-    // 优化 v-for 指令
-    right = `($it, $_i) in ${right}`;
-    obj[":key"] = "$_i";
+  if (source.match(/((v-on:)|(@)){1}.+:.+/)) {
+    //  2. 匹配事件回调
+    const left = source.match(/(?<=(v-on:)|(@)).*(?=:.+)/);
+    const _right = source.match(/(?<=(v-on:)|(@)).+/);
+    const right = _right[0].slice(_right[0].indexOf(":") + 1).trim();
+    return [
+      2,
+      {
+        [`@${left[0]}`]: right
+      }
+    ];
   }
-  obj[isStatic ? left : `:${left}`] = right;
-  return obj;
-};
-
-const hasSymbol = sign => {
-  if (~sign.search(/(?<=\s~).+(?=~\s)/)) {
-    // 文本
-    return 1;
+  if (source.match(/(v-bind)?:(\S+):.+/)) {
+    // 3-1. 匹配动态属性
+    const left =
+      source.match(/(?<=v-bind:)([\S]+)(?=:.+)/) ||
+      source.match(/(?<=:)[\S]+(?=:.+)/);
+    const _right = source.match(/(?<=v-bind:).+/) || source.match(/(?<=:).+/);
+    const right = _right[0].slice(_right[0].search(/:/) + 1).trim();
+    return [3, { [`:${left[0]}`]: right }];
   }
-  if (~sign.indexOf(":")) {
-    return 2;
+  if (source.match(/[\S]+:{1}[\s\S]+?\n/)) {
+    // 3-2. 匹配静态属性
+    const [left, right] = source.split(":").map(item => item.trim());
+    return [3, { [left]: right }];
   }
-  if (~sign.indexOf("{{")) {
-    return 3;
+  if (
+    isTag(source) ||
+    source.match(
+      /(\S+?(([.#&]\S+)|(\s+)){)|(\S+?(([.#&]\S+)|(\s+\n)))|(\s[A-Z]\S+)/
+    )
+  ) {
+    // 4. 匹配 header
+    return [4, parseHeader(source)];
   }
-  if (~sign.indexOf("{")) {
-    return 4;
+  if (source.trim() === "}") {
+    return [5];
   }
-  if (sign.trim() === "}") {
-    return 5;
-  }
-  return 0;
+  return [2, { [source.trim()]: null }];
 };
 
 const clearComment = string => {
-  // 清除所有的注释
-  // 需要处理以下几种情况
+  // 清除所有的注释, 需要处理以下几种情况
   // 1. <!-- xxx -->
   // 2. /* xxx */
   // 3. // xxx
-  let index,
-    res = "";
-  while (string) {
-    index = string.indexOf("<!--");
-    if (~index) {
-      res += string.slice(0, index);
-      index = string.indexOf("-->");
-      if (~index) {
-        string = string.substring(index + 3);
-        continue;
-      }
-      string = "";
-      continue;
-    }
-    index = string.indexOf("/*");
-    if (~index) {
-      res += string.slice(0, index);
-      index = string.indexOf("*/");
-      if (~index) {
-        string = string.substring(index + 2);
-        continue;
-      }
-      string = "";
-      continue;
-    }
-    index = string.indexOf("//");
-    if (~index) {
-      res += string.slice(0, index);
-      index = string.search(/\n/);
-      if (~index) {
-        string = string.substring(index + 2);
-        continue;
-      }
-      string = "";
-      continue;
-    }
-    res += string;
-    string = "";
-  }
-  return res;
+  // 4. 空行
+  string = string
+    .replace(/<!--[\s\S]+?-->/m, "")
+    .replace(/\/\*[\s\S]+?\*\//m, "")
+    .replace(/\/\/[\s\S]+?\n/m, "")
+    .replace(/\{\s{0,}\}/m, "")
+    .replace(/\n\s+(?=\n)/m, "");
+  return string;
 };
 
 const RegOneLine = /.+[.\n\r]/;
 
 const parseTea = source => {
   source = clearComment(source);
-  const ast = [];
+  const ast = [],
+    clearCacheEle = () => ({ children: [] });
   let _cacheStack = [],
-    _cacheEle = null,
+    _cacheEle = clearCacheEle(),
     ele = null,
     len = 0,
-    _status = 0,
-    _RegRes = null;
+    _RegRes = null,
+    _lineSource = "";
   while (source) {
     _RegRes = source.match(RegOneLine);
     if (_RegRes) {
-      if (!_RegRes[0].trim()) {
+      _lineSource = _RegRes[0];
+      if (!_lineSource.trim()) {
         // 处理空行
-        source = source.substring(_RegRes[0].length);
+        source = source.substring(_lineSource.length);
         continue;
       }
-      _status = hasSymbol(_RegRes[0]);
-      if (!_status) {
-        // 这里不做处理，仅改变 status 的状态
-        _status = whatType(_RegRes[0]);
-      }
+      let [_status, res] = hasSymbol(_lineSource);
       if (_status === 1) {
         // 解析出文本内容
-        !_cacheEle.children && (_cacheEle.children = []);
-        _cacheEle.children.push({ type: 1, content: parseContent(_RegRes[0]) });
+        _cacheEle.children.push({
+          type: 1,
+          content: res
+        });
       }
-      if (_status === 2) {
-        // 解析出 属性
-        _cacheEle.attr = Object.assign(
-          {},
-          _cacheEle.attr,
-          parseAttr(_RegRes[0], _cacheEle.attr)
-        );
+      if ([2, 3].includes(_status)) {
+        // 解析出 事件回调
+        // 解析出 动态属性
+        _cacheEle.attr = Object.assign({}, _cacheEle.attr, vueBetter(res));
       }
       if (_status === 4) {
         // 解析出 tagName 和 静态属性
-        _cacheEle = Object.assign({}, parseHeader(_RegRes[0]));
+        _cacheEle = Object.assign({}, res);
         _cacheStack.push(_cacheEle);
-        !~_RegRes[0].indexOf("{") && (_status = 5);
+        !~_lineSource.indexOf("{") && (_status = 5);
       }
       if (_status === 5) {
         // 处理 }
         ele = _cacheStack.pop();
         len = _cacheStack.length;
         if (len) {
-          !_cacheStack[len - 1].children &&
-            (_cacheStack[len - 1].children = []);
           _cacheStack[len - 1].children.push(ele);
         } else {
           ast.push(ele);
         }
-        _cacheEle = len ? _cacheStack[len - 1] : null;
+        _cacheEle = len ? _cacheStack[len - 1] : clearCacheEle();
       }
-      source = source.substring(_RegRes[0].length);
+      source = source.substring(_lineSource.length);
     } else {
       source = "";
     }

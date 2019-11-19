@@ -1,5 +1,3 @@
-const RegHeader = /\S+\s{/;
-
 const makeMap = string => {
   const list = string.split(",");
   return tag => list.includes(tag);
@@ -15,7 +13,12 @@ const isHTMLTag = makeMap(
   `html,body,base,head,link,meta,style,title,address,article,aside,footer,header,h1,h2,h3,h4,h5,h6,hgroup,nav,section,div,dd,dl,dt,figcaption,figure,picture,hr,img,li,main,ol,p,pre,ul,a,b,abbr,bdi,bdo,br,cite,code,data,dfn,em,i,kbd,mark,q,rp,rt,rtc,ruby,s,samp,small,span,strong,sub,sup,time,u,var,wbr,area,audio,map,track,video,embed,object,param,source,canvas,script,noscript,del,ins,caption,col,colgroup,table,thead,tbody,td,th,tr,button,datalist,fieldset,form,input,label,legend,meter,optgroup,option,output,progress,select,textarea,details,dialog,menu,menuitem,summary,content,element,shadow,template,blockquote,iframe,tfoot`
 );
 
-const isVueTag = makeMap(`slot`);
+const isVueTag = makeMap(`slot,template`);
+
+const isTag = _string => {
+  const string = _string.trim();
+  return isSVGTag(string) || isHTMLTag(string) || isVueTag(string);
+};
 
 export const parseHeader = string => {
   const _index = string.indexOf("{"),
@@ -56,135 +59,102 @@ export const parseHeader = string => {
     tagName,
     isSingle: isUnaryTag(tagName),
     type: 2,
+    children: [],
     attr: {
       ...obj
     }
   };
 };
 
-export const whatType = string => {
-  // 传入的字符串没有明显的标识，有以下几种情况
-  // 1. 原生标签
-  // 2. 属性
-  // 3. 组件
-  const res = string.match(/(\S+?)(?=[\.#&\s])/);
-  if (isHTMLTag(res[0]) || isSVGTag(res[0]) || isVueTag(res[0])) {
-    //   原生标签
-    return 4;
-  }
-  if (~string.search(/(?<=[A-Z]).+/)) {
-    //   组件
-    return 4;
-  }
-  //   属性
-  return 2;
-};
-
 export const parseContent = string => {
-  // 匹配 -content-
-  const res = string.match(/(?<=~).+(?=~)/);
-  return res[0];
+  // 匹配 ~~content
+  const _content =
+    string.match(/(?<=~~).+(?=\n)/) || string.match(/(?<=~).+(?=~\n)/);
+  if (!_content) {
+    throw Error(`You miss '~' at begin or end of the line.`);
+  }
+  return _content[0];
 };
 
-export const parseAttr = (string, attr) => {
-  // attr 用于查看已有的属性
-  string = string.trim();
-  !string.indexOf("v-bind") && (string = string.substring(6));
-  !string.indexOf("v-on") && (string = `@${string.substring(5)}`);
-  let _index = string.indexOf(":"),
-    left,
-    right,
-    isStatic = true;
-  if (_index === 0) {
-    // 说明是动态属性，先切除
-    string = string.substring(1);
-    isStatic = false;
-    _index = string.indexOf(":");
+export const vueBetter = attr => {
+  const [left] = Object.keys(attr);
+  const right = attr[left];
+  switch (left) {
+    case "v-for":
+      if (!right.match(/\sin\s/)) {
+        attr[left] = `($it, $_i) in ${right}`;
+        attr[":key"] = "$_i";
+      }
+      break;
+
+    default:
+      break;
   }
-  left = ~_index ? string.slice(0, _index) : string;
-  right = ~_index ? `${string.slice(_index + 1).trim()}` : null;
-  const obj = {};
-  if (left === "v-for" && !right.match(/\sin\s/)) {
-    // 优化 v-for 指令
-    right = `($it, $_i) in ${right}`;
-    obj[":key"] = "$_i";
-  }
-  obj[isStatic ? left : `:${left}`] = right;
-  return obj;
+  return attr;
 };
 
-export const hasSymbol = sign => {
-  if (~sign.search(/(?<=\s~).+(?=~\s)/)) {
-    // 文本
-    return 1;
+export const hasSymbol = source => {
+  if (source.match(/((~{1,2}).+)/)) {
+    // 1. 匹配文本
+    const _content =
+      source.match(/(?<=~~).+(?=\n)/) || source.match(/(?<=~).+(?=~\n)/);
+    if (!_content) {
+      throw Error(`You miss '~' at begin or end of the line.`);
+    }
+    return [1, _content[0]];
   }
-  if (~sign.indexOf(":")) {
-    return 2;
+  if (source.match(/((v-on:)|(@)){1}.+:.+/)) {
+    //  2. 匹配事件回调
+    const left = source.match(/(?<=(v-on:)|(@)).*(?=:.+)/);
+    const _right = source.match(/(?<=(v-on:)|(@)).+/);
+    const right = _right[0].slice(_right[0].indexOf(":") + 1).trim();
+    return [
+      2,
+      {
+        [`@${left[0]}`]: right
+      }
+    ];
   }
-  if (~sign.indexOf("{{")) {
-    return 3;
+  if (source.match(/(v-bind)?:(\S+):.+/)) {
+    // 3-1. 匹配动态属性
+    const left =
+      source.match(/(?<=v-bind:)([\S]+)(?=:.+)/) ||
+      source.match(/(?<=:)[\S]+(?=:.+)/);
+    const _right = source.match(/(?<=v-bind:).+/) || source.match(/(?<=:).+/);
+    const right = _right[0].slice(_right[0].search(/:/) + 1).trim();
+    return [3, { [`:${left[0]}`]: right }];
   }
-  if (~sign.indexOf("{")) {
-    return 4;
+  if (source.match(/[\S]+:{1}[\s\S]+?\n/)) {
+    // 3-2. 匹配静态属性
+    const [left, right] = source.split(":").map(item => item.trim());
+    return [3, { [left]: right }];
   }
-  if (sign.trim() === "}") {
-    return 5;
+  if (
+    isTag(source) ||
+    source.match(
+      /(\S+?(([.#&]\S+)|(\s+)){)|(\S+?(([.#&]\S+)|(\s+\n)))|(\s[A-Z]\S+)/
+    )
+  ) {
+    // 4. 匹配 header
+    return [4, parseHeader(source)];
   }
-  return 0;
+  if (source.trim() === "}") {
+    return [5];
+  }
+  return [2, { [source.trim()]: null }];
 };
 
 export const clearComment = string => {
-  // 清除所有的注释
-  // 需要处理以下几种情况
+  // 清除所有的注释, 需要处理以下几种情况
   // 1. <!-- xxx -->
   // 2. /* xxx */
   // 3. // xxx
-  let index,
-    res = "";
-  while (string) {
-    index = string.indexOf("<!--");
-    if (~index) {
-      res += string.slice(0, index);
-      index = string.indexOf("-->");
-      if (~index) {
-        string = string.substring(index + 3);
-        continue;
-      }
-      string = "";
-      continue;
-    }
-    index = string.indexOf("/*");
-    if (~index) {
-      res += string.slice(0, index);
-      index = string.indexOf("*/");
-      if (~index) {
-        string = string.substring(index + 2);
-        continue;
-      }
-      string = "";
-      continue;
-    }
-    index = string.indexOf("//");
-    if (~index) {
-      res += string.slice(0, index);
-      index = string.search(/\n/);
-      if (~index) {
-        string = string.substring(index + 2);
-        continue;
-      }
-      string = "";
-      continue;
-    }
-    res += string;
-    string = "";
-  }
-  return res;
-};
-
-export const log = ctx => {
-  if (typeof ctx === "string") {
-    console.log(ctx);
-    return;
-  }
-  console.log(JSON.stringify(ctx, null, 2));
+  // 4. 空行
+  string = string
+    .replace(/<!--[\s\S]+?-->/m, "")
+    .replace(/\/\*[\s\S]+?\*\//m, "")
+    .replace(/\/\/[\s\S]+?\n/m, "")
+    .replace(/\{\s{0,}\}/m, "")
+    .replace(/\n\s+(?=\n)/m, "");
+  return string;
 };
