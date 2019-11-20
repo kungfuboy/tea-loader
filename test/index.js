@@ -1,14 +1,6 @@
 const performance = require("perf_hooks").performance;
 const teaLoader = require("../dist/index.js");
 
-const log = ctx => {
-  if (typeof ctx === "string") {
-    console.log(ctx);
-    return;
-  }
-  console.log(JSON.stringify(ctx, null, 2));
-};
-
 const tea = `
   div.dd.bb#rd&fe {
       span {
@@ -50,6 +42,32 @@ const tea = `
   }
   `;
 
+  const tea2 = `
+  section.maintain-list {
+    ul {
+        li {
+            v-for: list
+            i.left {
+
+            }
+            div.right {
+                p.top {
+                    ~~{{$it.title}}
+                }
+                span.bottom {
+                    span.time {
+                        ~~{{$it.time | timeFormat}}
+                    }
+                    span.status {
+
+                    }
+                }
+            }
+        }
+    }
+}
+`
+
 const start = performance.now();
-console.log(teaLoader(tea));
+console.log(teaLoader(tea2));
 console.log(`\n 🚀 🚀 🚀 运行时间：${performance.now() - start} ms`);

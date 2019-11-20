@@ -1,3 +1,11 @@
+export const log = ctx => {
+  if (typeof ctx === "string") {
+    console.log(ctx);
+    return;
+  }
+  console.log(JSON.stringify(ctx, null, 2));
+};
+
 const makeMap = string => {
   const list = string.split(",");
   return tag => list.includes(tag);
@@ -154,7 +162,7 @@ export const clearComment = string => {
     .replace(/<!--[\s\S]+?-->/m, "")
     .replace(/\/\*[\s\S]+?\*\//m, "")
     .replace(/\/\/[\s\S]+?\n/m, "")
-    .replace(/\{\s{0,}\}/m, "")
-    .replace(/\n\s+(?=\n)/m, "");
+    .replace(/\{\s+\}/g, "")
+    .replace(/\n\s+(?=\n)/g, "");
   return string;
 };

@@ -143,8 +143,8 @@ const clearComment = string => {
     .replace(/<!--[\s\S]+?-->/m, "")
     .replace(/\/\*[\s\S]+?\*\//m, "")
     .replace(/\/\/[\s\S]+?\n/m, "")
-    .replace(/\{\s{0,}\}/m, "")
-    .replace(/\n\s+(?=\n)/m, "");
+    .replace(/\{\s+\}/g, "")
+    .replace(/\n\s+(?=\n)/g, "");
   return string;
 };
 
@@ -152,6 +152,7 @@ const RegOneLine = /.+[.\n\r]/;
 
 const parseTea = source => {
   source = clearComment(source);
+  console.log(source);
   const ast = [],
     clearCacheEle = () => ({ children: [] });
   let _cacheStack = [],
