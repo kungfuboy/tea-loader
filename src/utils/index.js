@@ -159,9 +159,9 @@ export const clearComment = string => {
   // 3. // xxx
   // 4. 空行
   string = string
-    .replace(/<!--[\s\S]+?-->/m, "")
-    .replace(/\/\*[\s\S]+?\*\//m, "")
-    .replace(/\/\/[\s\S]+?\n/m, "")
+    .replace(/<!--[\s\S]+?-->/gm, "")
+    .replace(/\/\*[\s\S]+?\*\//gm, "")
+    .replace(/\/\/[\s\S]+?\n/g, "")
     .replace(/\{\s+\}/g, "")
     .replace(/\n\s+(?=\n)/g, "");
   return string;

@@ -1,28 +1,35 @@
 Arguments: 
-  /usr/local/Cellar/node/12.12.0/bin/node /usr/local/Cellar/yarn/1.19.1/libexec/bin/yarn.js publish
+  /Users/dark/.nvm/versions/node/v10.15.0/bin/node /usr/local/Cellar/yarn/1.13.0/libexec/bin/yarn.js publish
 
 PATH: 
-  /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+  /Users/dark/.nvm/versions/node/v10.15.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/dark/Library/flutter/bin
 
 Yarn version: 
-  1.19.1
+  1.13.0
 
 Node version: 
-  12.12.0
+  10.15.0
 
 Platform: 
   darwin x64
 
 Trace: 
-  Error: https://registry.npmjs.org/-/user/org.couchdb.user:openrotary: ETIMEDOUT
-      at Timeout._onTimeout (/usr/local/Cellar/yarn/1.19.1/libexec/lib/cli.js:141224:19)
-      at listOnTimeout (internal/timers.js:531:17)
-      at processTimers (internal/timers.js:475:7)
+  Error: canceled
+      at Interface.<anonymous> (/usr/local/Cellar/yarn/1.13.0/libexec/lib/cli.js:125657:13)
+      at Interface.emit (events.js:182:13)
+      at Interface._ttyWrite (readline.js:783:16)
+      at ReadStream.onkeypress (readline.js:168:10)
+      at ReadStream.emit (events.js:182:13)
+      at emitKeys (internal/readline.js:424:14)
+      at emitKeys.next (<anonymous>)
+      at ReadStream.onData (readline.js:1022:36)
+      at ReadStream.emit (events.js:182:13)
+      at addChunk (_stream_readable.js:283:12)
 
 npm manifest: 
   {
     "name": "tea-loader",
-    "version": "0.1.2",
+    "version": "0.2.1",
     "main": "dist/index.js",
     "scripts": {
       "build": "rollup src/index.js --file dist/index.js --format cjs -w",
