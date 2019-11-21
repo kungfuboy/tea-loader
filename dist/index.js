@@ -149,7 +149,7 @@ const clearComment = string => {
   return string;
 };
 
-const RegOneLine = /.+.\n/;
+const RegOneLine = /.+\n/;
 
 const parseTea = source => {
   source = clearComment(source);
