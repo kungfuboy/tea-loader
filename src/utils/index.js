@@ -74,16 +74,6 @@ export const parseHeader = string => {
   };
 };
 
-export const parseContent = string => {
-  // 匹配 ~~content
-  const _content =
-    string.match(/(?<=~~).+(?=\n)/) || string.match(/(?<=~).+(?=~\n)/);
-  if (!_content) {
-    throw Error(`You miss '~' at begin or end of the line.`);
-  }
-  return _content[0];
-};
-
 export const vueBetter = attr => {
   const [left] = Object.keys(attr);
   const right = attr[left];
@@ -107,7 +97,7 @@ export const hasSymbol = source => {
     const _content =
       source.match(/(?<=~~).+(?=\n)/) || source.match(/(?<=~).+(?=~\n)/);
     if (!_content) {
-      throw Error(`You miss '~' at begin or end of the line.`);
+      throw Error(`${source}\nYou miss '~' at begin or end of the line.`);
     }
     return [1, _content[0]];
   }
@@ -159,6 +149,7 @@ export const clearComment = string => {
   // 3. // xxx
   // 4. 空行
   string = string
+    .replace(/\r\n/, "\n")
     .replace(/<!--[\s\S]+?-->/gm, "")
     .replace(/\/\*[\s\S]+?\*\//gm, "")
     .replace(/\/\/[\s\S]+?\n/g, "")

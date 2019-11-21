@@ -88,7 +88,7 @@ const hasSymbol = source => {
     const _content =
       source.match(/(?<=~~).+(?=\n)/) || source.match(/(?<=~).+(?=~\n)/);
     if (!_content) {
-      throw Error(`You miss '~' at begin or end of the line.`);
+      throw Error(`${source}\nYou miss '~' at begin or end of the line.`);
     }
     return [1, _content[0]];
   }
@@ -140,6 +140,7 @@ const clearComment = string => {
   // 3. // xxx
   // 4. 空行
   string = string
+    .replace(/\r\n/, "\n")
     .replace(/<!--[\s\S]+?-->/gm, "")
     .replace(/\/\*[\s\S]+?\*\//gm, "")
     .replace(/\/\/[\s\S]+?\n/g, "")
@@ -148,11 +149,10 @@ const clearComment = string => {
   return string;
 };
 
-const RegOneLine = /.+[.\n\r]/;
+const RegOneLine = /.+.\n/;
 
 const parseTea = source => {
   source = clearComment(source);
-  console.log(source);
   const ast = [],
     clearCacheEle = () => ({ children: [] });
   let _cacheStack = [],

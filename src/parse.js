@@ -1,10 +1,9 @@
 import { hasSymbol, clearComment, vueBetter, log } from "./utils/index.js";
 
-const RegOneLine = /.+[.\n\r]/;
+const RegOneLine = /.+\n/;
 
 export const parseTea = source => {
   source = clearComment(source);
-  console.log(source)
   const ast = [],
     clearCacheEle = () => ({ children: [] });
   let _cacheStack = [],

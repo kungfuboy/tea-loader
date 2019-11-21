@@ -42,7 +42,7 @@ const tea = `
   }
   `;
 
-  const tea2 = `
+const tea2 = `
   section.maintain-list {
     ul {
         li {
@@ -66,8 +66,41 @@ const tea = `
         }
     }
 }
-`
+`;
+
+const tea3 = `
+section.complaint {
+    Header {
+        subtitle: 意见反馈
+    }
+    div.handle {
+        span.left {
+            ~反馈类型~
+        }
+        span.right {
+            ~投诉~
+        }
+    }
+    div.content {
+        textarea {
+            placeholder: 请简明叙述下问题吧~
+        }
+        <!-- 组件欠缺 -->
+        ul.img-list {
+            li.img-li {
+                v-for: imgList
+            }
+            li.add {
+                v-show: imgList.length < 9
+            }
+        }
+    }
+    div.big-btn {
+        ~确认提交~
+    }
+}
+`;
 
 const start = performance.now();
-console.log(teaLoader(tea2));
+console.log(teaLoader(tea3));
 console.log(`\n 🚀 🚀 🚀 运行时间：${performance.now() - start} ms`);
