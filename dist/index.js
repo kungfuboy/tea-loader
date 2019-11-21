@@ -140,7 +140,8 @@ const clearComment = string => {
   // 3. // xxx
   // 4. 空行
   string = string
-    .replace(/\r\n/, "\n")
+    .replace(/\r/, "\n")
+    .replace(/\n\n/, "\n")
     .replace(/<!--[\s\S]+?-->/gm, "")
     .replace(/\/\*[\s\S]+?\*\//gm, "")
     .replace(/\/\/[\s\S]+?\n/g, "")
