@@ -76,9 +76,12 @@ section.complaint {
     div.handle {
         span.left {
             ~反馈类型~
+            
         }
-        span.right {
+        span {
             ~投诉~
+            :class: ['right', {'red': $it.status}]
+            ~~{{$it.msg}}
         }
     }
     div.content {
@@ -101,6 +104,27 @@ section.complaint {
 }
 `;
 
+const tea4 = `
+section.maintain-detail {
+    Header {
+        title: 报修明细
+        bottomLine
+    }
+    ul.list {
+      li {
+          v-for: msgList
+          span.left {
+              ~~{{$it.label}}
+          }
+          span {
+              :class: ['right', {'red': $it.status}]
+              ~~{{$it.msg}}
+          }    
+      }
+    }
+}   
+`;
+
 const start = performance.now();
-console.log(teaLoader(tea3));
+console.log(teaLoader(tea4));
 console.log(`\n 🚀 🚀 🚀 运行时间：${performance.now() - start} ms`);

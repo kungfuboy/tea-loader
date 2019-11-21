@@ -92,6 +92,9 @@ export const vueBetter = attr => {
 };
 
 export const hasSymbol = source => {
+  if (source.trim() === "}") {
+    return [5];
+  }
   if (source.match(/((~{1,2}).+)/)) {
     // 1. 匹配文本
     const _content =
@@ -135,9 +138,6 @@ export const hasSymbol = source => {
   ) {
     // 4. 匹配 header
     return [4, parseHeader(source)];
-  }
-  if (source.trim() === "}") {
-    return [5];
   }
   return [2, { [source.trim()]: null }];
 };
