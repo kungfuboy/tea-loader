@@ -71,12 +71,32 @@ const parseHeader = string => {
 const vueBetter = attr => {
   const [left] = Object.keys(attr);
   const right = attr[left];
+  let key = null;
   switch (left) {
     case "v-for":
       if (!right.match(/\sin\s/)) {
         attr[left] = `($it, $_i) in ${right}`;
         attr[":key"] = "$_i";
       }
+      if(key = right.match(/(?<=,).+(?=\)\s+in)/)) {
+        attr[":key"] = attr[":key"] ? attr[":key"] : key[0].trim();
+      }
+      break;
+    case "?":
+      attr["v-if"] = right;
+      delete attr["?"];
+      break;
+    case "/?":
+      attr["v-else-if"] = right;
+      delete attr["/?"];
+      break;
+    case "/":
+      attr["v-else"] = right;
+      delete attr["/"];
+      break;
+    case "|":
+      attr["v-show"] = right;
+      delete attr["|"];
       break;
   }
   return attr;

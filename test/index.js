@@ -112,11 +112,16 @@ section.maintain-detail {
     }
     ul.list {
       li {
-          v-for: msgList
+          v-for: (item, _index) in msgList
+          :key: _index + 1
           span.left {
+              ?: active
+              /?: active === 0
               ~~{{$it.label}}
           }
           span {
+              /
+              |: isShow
               :class: ['right', {'red': $it.status}]
               ~~{{$it.msg}}
           }    
