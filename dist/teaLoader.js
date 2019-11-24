@@ -1,5 +1,3 @@
-'use strict';
-
 const makeMap = string => {
   const list = string.split(",");
   return tag => list.includes(tag);
@@ -264,4 +262,4 @@ function index(source) {
   return AST2HTML(res);
 }
 
-module.exports = index;
+export default index;
