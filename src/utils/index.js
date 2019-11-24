@@ -30,7 +30,7 @@ const isTag = _string => {
 
 export const parseHeader = string => {
   const _index = string.indexOf("{"),
-    reg = /(\S+?)(?=[\.#&\s])/,
+    reg = /(\S+?)(?=[.#&\s])/,
     ele = {};
   let res = "",
     tagName = "";
@@ -77,15 +77,15 @@ export const parseHeader = string => {
 export const vueBetter = attr => {
   const [left] = Object.keys(attr);
   const right = attr[left];
-  let key = null
+  let key = null;
   switch (left) {
     case "v-for":
       if (!right.match(/\sin\s/)) {
         attr[left] = `($it, $_i) in ${right}`;
         attr[":key"] = "$_i";
       }
-      if(key = right.match(/(?<=,).+(?=\)\s+in)/)) {
-        attr[":key"] = attr[":key"] ? attr[":key"] : key[0].trim()
+      if ((key = right.match(/(?<=,).+(?=\)\s+in)/))) {
+        attr[":key"] = attr[":key"] ? attr[":key"] : key[0].trim();
       }
       break;
     case "?":

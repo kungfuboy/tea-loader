@@ -130,6 +130,12 @@ section.maintain-detail {
 }   
 `;
 
+const tea5 = `
+section {
+	div.active
+}
+`;
+
 const start = performance.now();
-console.log(teaLoader(tea4));
+console.log(teaLoader(tea5));
 console.log(`\n 🚀 🚀 🚀 运行时间：${performance.now() - start} ms`);
