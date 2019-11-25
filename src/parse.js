@@ -38,7 +38,8 @@ export const parseTea = source => {
         // 解析出 tagName 和 静态属性
         _cacheEle = Object.assign({}, res);
         _cacheStack.push(_cacheEle);
-        !~_lineSource.indexOf("{") && (_status = 5);
+        (!~_lineSource.indexOf("{") || ~_lineSource.indexOf("{}")) &&
+          (_status = 5);
       }
       if (_status === 5) {
         // 处理 }
