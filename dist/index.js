@@ -75,7 +75,7 @@ const vueBetter = attr => {
   switch (left) {
     case "v-for":
     case "%":
-      attr["?"] && delete attr["?"];
+      attr["%"] && delete attr["%"];
       if (!right.match(/\sin\s/)) {
         attr["v-for"] = `($it, $_i) in ${right}`;
         attr[":key"] = "$_i";
