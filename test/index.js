@@ -132,7 +132,9 @@ section.maintain-detail {
 
 const tea5 = `
 section {
-	div.active 
+	div {
+    	~~加纳看
+    }
 }
 `;
 
