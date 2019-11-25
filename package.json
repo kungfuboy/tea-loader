@@ -3,9 +3,9 @@
   "version": "0.2.6",
   "main": "dist/index.js",
   "scripts": {
-    "build": "rollup src/index.js --file dist/index.js --format cjs -w",
+    "build": "rollup src/index.js --file dist/index.js --format cjs",
     "prebuild": "rollup src/index.js --file dist/teaLoader.js --format es",
-    "dev": "nodemon dist/index.js",
+    "dev": "rollup src/index.js --file dist/index.js --format cjs -w",
     "test": "nodemon test/index.js"
   },
   "license": "MIT",

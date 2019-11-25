@@ -23,6 +23,7 @@ const isTag = _string => {
 };
 
 const parseHeader = string => {
+  string = string.replace(/\{\}/, "");
   const _index = string.indexOf("{"),
     reg = /(\S+?)(?=[.#&\s])/,
     ele = {};

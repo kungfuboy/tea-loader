@@ -1,30 +1,30 @@
 Arguments: 
-  /Users/dark/.nvm/versions/node/v10.15.0/bin/node /usr/local/Cellar/yarn/1.13.0/libexec/bin/yarn.js publish
+  /usr/local/Cellar/node/12.12.0/bin/node /usr/local/Cellar/yarn/1.19.1/libexec/bin/yarn.js publish
 
 PATH: 
-  /Users/dark/.nvm/versions/node/v10.15.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/dark/Library/flutter/bin
+  /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
 
 Yarn version: 
-  1.13.0
+  1.19.1
 
 Node version: 
-  10.15.0
+  12.12.0
 
 Platform: 
   darwin x64
 
 Trace: 
-  Error: https://registry.npm.taobao.org/-/user/org.couchdb.user:openrotary: [conflict] User openrotary already exists
-      at Request.params.callback [as _callback] (/usr/local/Cellar/yarn/1.13.0/libexec/lib/cli.js:66255:18)
-      at Request.self.callback (/usr/local/Cellar/yarn/1.13.0/libexec/lib/cli.js:129397:22)
-      at Request.emit (events.js:182:13)
-      at Request.<anonymous> (/usr/local/Cellar/yarn/1.13.0/libexec/lib/cli.js:130369:10)
-      at Request.emit (events.js:182:13)
-      at IncomingMessage.<anonymous> (/usr/local/Cellar/yarn/1.13.0/libexec/lib/cli.js:130291:12)
-      at Object.onceWrapper (events.js:273:13)
-      at IncomingMessage.emit (events.js:187:15)
-      at endReadableNT (_stream_readable.js:1094:12)
-      at process._tickCallback (internal/process/next_tick.js:63:19)
+  Error: canceled
+      at Interface.<anonymous> (/usr/local/Cellar/yarn/1.19.1/libexec/lib/cli.js:136824:13)
+      at Interface.emit (events.js:210:5)
+      at Interface._ttyWrite (readline.js:887:16)
+      at ReadStream.onkeypress (readline.js:191:10)
+      at ReadStream.emit (events.js:210:5)
+      at emitKeys (internal/readline/utils.js:433:14)
+      at emitKeys.next (<anonymous>)
+      at ReadStream.onData (readline.js:1153:36)
+      at ReadStream.emit (events.js:210:5)
+      at addChunk (_stream_readable.js:308:12)
 
 npm manifest: 
   {
@@ -32,8 +32,9 @@ npm manifest:
     "version": "0.2.6",
     "main": "dist/index.js",
     "scripts": {
-      "build": "rollup src/index.js --file dist/index.js --format cjs -w",
-      "dev": "nodemon dist/index.js",
+      "build": "rollup src/index.js --file dist/index.js --format cjs",
+      "prebuild": "rollup src/index.js --file dist/teaLoader.js --format es",
+      "dev": "rollup src/index.js --file dist/index.js --format cjs -w",
       "test": "nodemon test/index.js"
     },
     "license": "MIT",
