@@ -117,6 +117,11 @@ const hasSymbol = source => {
     }
     return [1, _content[0]];
   }
+  if (source.match(/\S+:\S+:\s.+/)) {
+    // 匹配其他指令
+    const [left, ...right] = source.trim().split(": ");
+    return [3, { [`${left}`]: right.join("") }];
+  }
   if (source.match(/((v-on:)|(@)){1}.+:.+/)) {
     //  2. 匹配事件回调
     const left = source.match(/(?<=(v-on:)|(@)).*(?=:.+)/);
@@ -138,6 +143,7 @@ const hasSymbol = source => {
     const right = _right[0].slice(_right[0].search(/:/) + 1).trim();
     return [3, { [`:${left[0]}`]: right }];
   }
+
   if (source.match(/[\S]+:{1}[\s\S]+?\n/)) {
     // 3-2. 匹配静态属性
     const [left, right] = source.split(":").map(item => item.trim());

@@ -32,6 +32,7 @@ const tea = `
       a.dir {
         v-bind:href: url
         v-on:click: hanleClick
+        v-stream:click: click$
       }
 
       App
@@ -133,7 +134,8 @@ section.maintain-detail {
 const tea5 = `
 section {
 	div {
-    	~~加纳看
+        ~~加纳看
+        v-stream:click: click$
     }
 }
 `;
