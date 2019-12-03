@@ -57,7 +57,8 @@ export const parseTea = source => {
       source = "";
     }
   }
-  return ast;
+  console.log(JSON.stringify(ast));
+  return JSON.stringify(ast);
 };
 
 const renderAttr = attr => {

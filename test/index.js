@@ -131,13 +131,9 @@ section.maintain-detail {
 `;
 
 const tea5 = `
-section {
-	div {
-    	~~加纳看
-    }
-}
+[{"tagName":"section","isSingle":false,"type":2,"children":[{"tagName":"div","isSingle":false,"type":2,"children":[{"type":1,"content":"JSON解析"}],"attr":{}}],"attr":{}}]
 `;
 
 const start = performance.now();
-console.log(teaLoader(tea5));
+console.log(teaLoader(tea4));
 console.log(`\n 🚀 🚀 🚀 运行时间：${performance.now() - start} ms`);

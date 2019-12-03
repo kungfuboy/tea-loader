@@ -227,7 +227,7 @@ const parseTea = source => {
       source = "";
     }
   }
-  return ast;
+  return JSON.stringify(ast);
 };
 
 const renderAttr = attr => {
@@ -260,8 +260,13 @@ const AST2HTML = ast => {
     .join("");
 };
 
-function index(source) {
-  const res = parseTea(source);
+function index(_source) {
+  let res;
+  try {
+    res = JSON.parse(_source);
+  } catch (error) {
+    res = JSON.parse(parseTea(_source));
+  }
   return AST2HTML(res);
 }
 
