@@ -32,6 +32,7 @@ const tea = `
       a.dir {
         v-bind:href: url
         v-on:click: hanleClick
+        v-stream:click: click$
       }
 
       App
