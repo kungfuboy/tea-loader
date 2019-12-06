@@ -235,7 +235,7 @@ const parseTea = source => {
       source = "";
     }
   }
-  console.log(JSON.stringify(ast));
+  // console.log(JSON.stringify(ast));
   return JSON.stringify(ast);
 };
 
