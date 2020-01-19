@@ -115,37 +115,17 @@ const hasSymbol = source => {
     }
     return [1, _content[0]];
   }
-  if (source.match(/\S+:\S+:\s.+/)) {
-    // 匹配其他指令
-    const [left, ...right] = source.trim().split(": ");
-    return [3, { [`${left}`]: right.join("") }];
-  }
-  if (source.match(/((v-on:)|(@)){1}.+:.+/)) {
-    //  2. 匹配事件回调
-    const left = source.match(/(?<=(v-on:)|(@)).*(?=:.+)/);
-    const _right = source.match(/(?<=(v-on:)|(@)).+/);
-    const right = _right[0].slice(_right[0].indexOf(":") + 1).trim();
+
+  if (~source.indexOf(": ")) {
+    const index = source.indexOf(": ");
+    const left = source.slice(0, index);
+    const right = source.slice(index + 2);
     return [
-      2,
+      3,
       {
-        [`@${left[0]}`]: right
+        [`${left.trim()}`]: right.trim()
       }
     ];
-  }
-  if (source.match(/(v-bind)?:(\S+):.+/)) {
-    // 3-1. 匹配动态属性
-    const left =
-      source.match(/(?<=v-bind:)([\S]+)(?=:.+)/) ||
-      source.match(/(?<=:)[\S]+(?=:.+)/);
-    const _right = source.match(/(?<=v-bind:).+/) || source.match(/(?<=:).+/);
-    const right = _right[0].slice(_right[0].search(/:/) + 1).trim();
-    return [3, { [`:${left[0]}`]: right }];
-  }
-
-  if (source.match(/[\S]+:{1}[\s\S]+?\n/)) {
-    // 3-2. 匹配静态属性
-    const [left, right] = source.split(":").map(item => item.trim());
-    return [3, { [left]: right }];
   }
   if (
     isTag(source) ||
@@ -233,7 +213,6 @@ const parseTea = source => {
       source = "";
     }
   }
-  // console.log(JSON.stringify(ast));
   return JSON.stringify(ast);
 };
 
