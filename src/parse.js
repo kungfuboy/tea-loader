@@ -85,7 +85,7 @@ export const AST2HTML = ast => {
       }
       return `<${ele.tagName}${renderAttr(ele.attr)}>${AST2HTML(
         ele.children
-      )}</${ele.tagName}>`;
+      )}</${ele.tagName}> `;
     })
     .join("");
 };
