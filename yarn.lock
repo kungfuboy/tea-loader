@@ -321,7 +321,7 @@
 
 "@types/estree@*":
   version "0.0.39"
-  resolved "http://r.cnpmjs.org/@types/estree/download/@types/estree-0.0.39.tgz#e177e699ee1b8c22d23174caaa7422644389509f"
+  resolved "https://r.cnpmjs.org/@types/estree/download/@types/estree-0.0.39.tgz#e177e699ee1b8c22d23174caaa7422644389509f"
   integrity sha1-4Xfmme4bjCLSMXTKqnQiZEOJUJ8=
 
 "@types/istanbul-lib-coverage@*", "@types/istanbul-lib-coverage@^2.0.0":
@@ -346,7 +346,7 @@
 
 "@types/node@*":
   version "12.11.5"
-  resolved "http://r.cnpmjs.org/@types/node/download/@types/node-12.11.5.tgz#6c3c8dc84988aff11fd2a63d7b5fbf39eaaab7b1"
+  resolved "https://r.cnpmjs.org/@types/node/download/@types/node-12.11.5.tgz#6c3c8dc84988aff11fd2a63d7b5fbf39eaaab7b1"
   integrity sha1-bDyNyEmIr/Ef0qY9e1+/Oeqqt7E=
 
 "@types/stack-utils@^1.0.1":
@@ -401,7 +401,7 @@ acorn@^6.0.1:
 
 acorn@^7.1.0:
   version "7.1.0"
-  resolved "http://r.cnpmjs.org/acorn/download/acorn-7.1.0.tgz#949d36f2c292535da602283586c2477c57eb2d6c"
+  resolved "https://r.cnpmjs.org/acorn/download/acorn-7.1.0.tgz#949d36f2c292535da602283586c2477c57eb2d6c"
   integrity sha1-lJ028sKSU12mAig1hsJHfFfrLWw=
 
 ajv@^6.5.5:
@@ -3234,7 +3234,7 @@ rimraf@^2.5.4, rimraf@^2.6.1, rimraf@^2.6.3:
 
 rollup@^1.25.1:
   version "1.25.1"
-  resolved "http://r.cnpmjs.org/rollup/download/rollup-1.25.1.tgz#905707d686dc8d7218af63dcfb9e37d1f3dc3c34"
+  resolved "https://r.cnpmjs.org/rollup/download/rollup-1.25.1.tgz#905707d686dc8d7218af63dcfb9e37d1f3dc3c34"
   integrity sha1-kFcH1obcjXIYr2Pc+5430fPcPDQ=
   dependencies:
     "@types/estree" "*"
@@ -3635,9 +3635,9 @@ timed-out@^4.0.0:
   integrity sha1-8y6srFoXW+ol1/q1Zas+2HQe9W8=
 
 tmpl@1.0.x:
-  version "1.0.4"
-  resolved "https://registry.npmjs.org/tmpl/-/tmpl-1.0.4.tgz#23640dd7b42d00433911140820e5cf440e521dd1"
-  integrity sha1-I2QN17QtAEM5ERQIIOXPRA5SHdE=
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/tmpl/-/tmpl-1.0.5.tgz#8683e0b902bb9c20c4f726e3c0b69f36518c07cc"
+  integrity sha512-3f0uOEAQwIqGuWW2MVzYg8fV/QNnc/IpuJNG837rLuczAaLVHslWHZQj4IGiEl5Hs3kkbhwL9Ab7Hrsmuj+Smw==
 
 to-fast-properties@^2.0.0:
   version "2.0.0"
