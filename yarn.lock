@@ -321,7 +321,7 @@
 
 "@types/estree@*":
   version "0.0.39"
-  resolved "http://r.cnpmjs.org/@types/estree/download/@types/estree-0.0.39.tgz#e177e699ee1b8c22d23174caaa7422644389509f"
+  resolved "https://r.cnpmjs.org/@types/estree/download/@types/estree-0.0.39.tgz#e177e699ee1b8c22d23174caaa7422644389509f"
   integrity sha1-4Xfmme4bjCLSMXTKqnQiZEOJUJ8=
 
 "@types/istanbul-lib-coverage@*", "@types/istanbul-lib-coverage@^2.0.0":
@@ -346,7 +346,7 @@
 
 "@types/node@*":
   version "12.11.5"
-  resolved "http://r.cnpmjs.org/@types/node/download/@types/node-12.11.5.tgz#6c3c8dc84988aff11fd2a63d7b5fbf39eaaab7b1"
+  resolved "https://r.cnpmjs.org/@types/node/download/@types/node-12.11.5.tgz#6c3c8dc84988aff11fd2a63d7b5fbf39eaaab7b1"
   integrity sha1-bDyNyEmIr/Ef0qY9e1+/Oeqqt7E=
 
 "@types/stack-utils@^1.0.1":
@@ -401,7 +401,7 @@ acorn@^6.0.1:
 
 acorn@^7.1.0:
   version "7.1.0"
-  resolved "http://r.cnpmjs.org/acorn/download/acorn-7.1.0.tgz#949d36f2c292535da602283586c2477c57eb2d6c"
+  resolved "https://r.cnpmjs.org/acorn/download/acorn-7.1.0.tgz#949d36f2c292535da602283586c2477c57eb2d6c"
   integrity sha1-lJ028sKSU12mAig1hsJHfFfrLWw=
 
 ajv@^6.5.5:
@@ -3234,7 +3234,7 @@ rimraf@^2.5.4, rimraf@^2.6.1, rimraf@^2.6.3:
 
 rollup@^1.25.1:
   version "1.25.1"
-  resolved "http://r.cnpmjs.org/rollup/download/rollup-1.25.1.tgz#905707d686dc8d7218af63dcfb9e37d1f3dc3c34"
+  resolved "https://r.cnpmjs.org/rollup/download/rollup-1.25.1.tgz#905707d686dc8d7218af63dcfb9e37d1f3dc3c34"
   integrity sha1-kFcH1obcjXIYr2Pc+5430fPcPDQ=
   dependencies:
     "@types/estree" "*"
@@ -3727,11 +3727,9 @@ uglify-js@^3.1.4:
     source-map "~0.6.1"
 
 undefsafe@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/undefsafe/-/undefsafe-2.0.2.tgz#225f6b9e0337663e0d8e7cfd686fc2836ccace76"
-  integrity sha1-Il9rngM3Zj4Njnz9aG/Cg2zKznY=
-  dependencies:
-    debug "^2.2.0"
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/undefsafe/-/undefsafe-2.0.5.tgz#38733b9327bdcd226db889fb723a6efd162e6e2c"
+  integrity sha512-WxONCrssBM8TSPRqN5EmsjVrsv4A8X12J4ArBiiayv3DyyG3ZlIg6yysuuSYdZsVz3TKcTg2fd//Ujd4CHV1iA==
 
 union-value@^1.0.0:
   version "1.0.1"
